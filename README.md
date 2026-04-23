@@ -84,7 +84,9 @@ The narrative arc: start with a hosted API (Grok), iterate on the serving archit
 
 ## STT portfolio breadth
 
-Six speech-to-text projects covering different architectural patterns. Each is an original integration built on publicly available model and library components. The three flagship sections above describe the work in narrative form; this table is the quick reference showing what was built versus what was reused.
+I am the **integration author and architect** on the projects below, not the author of the underlying speech models. I did not train Parakeet, faster-whisper, pyannote, or any of the third-party LLMs these systems call. NVIDIA, OpenAI/Systran, and the pyannote research group own that work. What I built is the layer on top: the glue code, the architectural decisions, the novel components where the shipped product needed something the model vendors didn't provide, and the production hardening that turns a research checkpoint into a system that runs unattended on owned hardware.
+
+Six speech-to-text projects below, covering different architectural patterns. The three flagship sections above describe the work in narrative form; this table is the quick reference showing what I authored versus what I integrated.
 
 | Project | Public repo | Built (original) | Built on (open-source / third-party) |
 |---|---|---|---|
@@ -95,7 +97,7 @@ Six speech-to-text projects covering different architectural patterns. Each is a
 | **Project-Aurora-Echo-v2.0** | [repo](https://github.com/NathanMaine/Project-Aurora-Echo-v2.0) | NVIDIA-accelerated production refinement, structured meeting summaries | NVIDIA NIM, TensorRT-LLM |
 | **realtime-ai-assistant (v1-v4)** | [v1](https://github.com/NathanMaine/realtime-ai-assistant) / [v2](https://github.com/NathanMaine/realtime-ai-assistant002) / [v3-fastapi](https://github.com/NathanMaine/realtime-ai-assistant003-fast-api) / [v4-streamlit](https://github.com/NathanMaine/realtime-ai-assistant004-stream-lit) | Four progressive architectural iterations: xAI Grok integration, FastAPI + WebSocket rewrite, Streamlit UI variant, DGX-hosted production | xAI Grok API, FastAPI, Streamlit |
 
-The novel engineering sits at the integration layer: CTC alignment that skips the forced-aligner step, provider abstraction with runtime switching, two-channel capture that sidesteps the diarization problem, and real-time orchestration with multi-provider failover. The underlying models (Parakeet, faster-whisper, pyannote) are industry-standard components; the architecture around them is original.
+The novel engineering sits at the integration layer, which is the layer I authored: CTC alignment that skips the forced-aligner step, provider abstraction with runtime switching, two-channel capture that sidesteps the diarization problem, and real-time orchestration with multi-provider failover. The underlying models (NVIDIA Parakeet, Systran faster-whisper, pyannote.audio, xAI Grok, Google Gemini, Meta Llama via Ollama) are industry-standard components authored by their respective vendors and research groups. I integrate them. The architecture around them, the patches that made them run on a Blackwell-class GPU with PyTorch nightly, and the production glue that keeps a 1,013-file corpus or a live meeting pipeline running end-to-end — that is the work under my name.
 
 ---
 
