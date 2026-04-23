@@ -52,16 +52,32 @@ Multi-speaker podcast synthesis using OpenMOSS MOSS-TTS 8B. Custom continuation 
 
 ## 3. Project Aurora Echo — orchestration depth
 
-**Repo:** [NathanMaine/Project-Aurora-Echo](https://github.com/NathanMaine/Project-Aurora-Echo)
+**Current version:** [NathanMaine/Project-Aurora-Echo-v2.0](https://github.com/NathanMaine/Project-Aurora-Echo-v2.0) — NVIDIA-accelerated AI meeting copilot with real-time transcription, speaker diarization, and structured meeting summaries.
 
-Real-time meeting copilot: captures audio, runs faster-whisper for streaming transcription, pyannote for diarization, and a multi-provider LLM for summarization. Runs on the same DGX Spark that powers the other two projects.
+Real-time meeting copilot that captures audio, runs faster-whisper for streaming transcription, pyannote for diarization, and a multi-provider LLM for summarization. Runs on the same DGX Spark that powers the other two projects.
 
-**Stack:** faster-whisper, pyannote.audio, multi-provider LLM routing, FastAPI, WebSocket streaming.
+**Stack:** faster-whisper, pyannote.audio, multi-provider LLM routing, FastAPI, WebSocket streaming, NVIDIA GPU acceleration.
 
 **What it demonstrates:**
 - ASR + diarization + LLM chained inside a latency budget
 - Production orchestration of open-source speech components
 - Multi-provider failover at the LLM layer
+- Iteration through multiple architectures to find the production shape
+
+### Iteration history
+
+This project reached its current form through six public iterations. Each repo is preserved so the architectural evolution is inspectable:
+
+| # | Repo | Architecture focus |
+|---|---|---|
+| v1 | [realtime-ai-assistant](https://github.com/NathanMaine/realtime-ai-assistant) | First pass: xAI Grok API + live transcription |
+| v2 | [realtime-ai-assistant002](https://github.com/NathanMaine/realtime-ai-assistant002) | Refined xAI Grok integration + MIT license |
+| v3 | [realtime-ai-assistant003-fast-api](https://github.com/NathanMaine/realtime-ai-assistant003-fast-api) | **FastAPI + WebSocket** architecture for real-time action-item extraction |
+| v4 | [realtime-ai-assistant004-stream-lit](https://github.com/NathanMaine/realtime-ai-assistant004-stream-lit) | Streamlit UI variant for rapid iteration on user interaction |
+| PoC | [Project-Aurora-Echo](https://github.com/NathanMaine/Project-Aurora-Echo) | **Pivot to self-hosted**: faster-whisper + pyannote + multi-provider LLM, running on DGX Spark |
+| v2.0 | [Project-Aurora-Echo-v2.0](https://github.com/NathanMaine/Project-Aurora-Echo-v2.0) | **Production**: NVIDIA-accelerated, structured meeting summaries, hardened for daily use |
+
+The narrative arc: start with a hosted API (Grok), iterate on the serving architecture (FastAPI versus Streamlit), then pivot to self-hosted open-source ASR + diarization on owned hardware, then harden into the NVIDIA-accelerated production version.
 
 ---
 
