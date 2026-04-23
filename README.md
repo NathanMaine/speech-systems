@@ -14,7 +14,7 @@ Speech-AI has three distinct engineering disciplines that rarely share a codebas
 2. **TTS** turns text into audio. The failure modes are prosody, speaker consistency, emotion control, pronunciation edge cases.
 3. **Orchestration** takes one or both of the above and makes them usable inside a product. The failure modes are latency budgets, cost, concurrency, evaluation.
 
-The three projects below cover one discipline each, in depth.
+The sections below cover each discipline in two layers: a flagship project that goes deep, and a portfolio table showing the full set of projects I have built in that discipline.
 
 ---
 
@@ -82,11 +82,11 @@ The narrative arc: start with a hosted API (Grok), iterate on the serving archit
 
 ---
 
-## STT portfolio breadth
+## ASR portfolio breadth
 
-I am the **integration author and architect** on the projects below, not the author of the underlying speech models. I did not train Parakeet, faster-whisper, pyannote, or any of the third-party LLMs these systems call. NVIDIA, OpenAI/Systran, and the pyannote research group own that work. What I built is the layer on top: the glue code, the architectural decisions, the novel components where the shipped product needed something the model vendors didn't provide, and the production hardening that turns a research checkpoint into a system that runs unattended on owned hardware.
+I am the **integration author and architect** on the projects below, not the author of the underlying speech models. I did not train Parakeet, faster-whisper, pyannote, or any of the third-party LLMs these systems call. NVIDIA, Systran, and the pyannote research group own that work. What I built is the layer on top: the glue code, the architectural decisions, the novel components where the shipped product needed something the model vendors didn't provide, and the production hardening that turns a research checkpoint into a system that runs unattended on owned hardware.
 
-Six speech-to-text projects below, covering different architectural patterns. The three flagship sections above describe the work in narrative form; this table is the quick reference showing what I authored versus what I integrated.
+Six ASR projects below, covering different architectural patterns. The flagship ASR section above describes one of them in narrative form; this table is the quick reference showing what I authored versus what I integrated.
 
 All six projects below are my original creations. The code, the architecture, the integration patterns, and the novel components are mine. The table splits each project into **I wrote** (original code I authored end-to-end) and **I use** (third-party models, APIs, and libraries I integrate but did not create).
 
@@ -100,6 +100,23 @@ All six projects below are my original creations. The code, the architecture, th
 | **realtime-ai-assistant (v1-v4)** | [v1](https://github.com/NathanMaine/realtime-ai-assistant) / [v2](https://github.com/NathanMaine/realtime-ai-assistant002) / [v3-fastapi](https://github.com/NathanMaine/realtime-ai-assistant003-fast-api) / [v4-streamlit](https://github.com/NathanMaine/realtime-ai-assistant004-stream-lit) | Four progressive architectural iterations, all authored by me: xAI Grok integration, FastAPI + WebSocket rewrite, Streamlit UI variant, DGX-hosted production pivot | xAI Grok API, FastAPI framework, Streamlit framework |
 
 The novel engineering sits at the integration layer, which is the layer I authored end-to-end: the CTC alignment that skips the forced-aligner step, the provider abstraction with runtime switching, the two-channel capture that sidesteps the diarization problem, and the real-time orchestration with multi-provider failover. The underlying models (NVIDIA Parakeet, Systran faster-whisper, pyannote.audio, xAI Grok, Google Gemini, Meta Llama via Ollama) are industry-standard components authored by their respective vendors and research groups. I integrate them. The architecture around them, the patches that made them run on a Blackwell-class GPU with PyTorch nightly, and the production glue that keeps a 1,013-file corpus or a live meeting pipeline running end-to-end is my work.
+
+---
+
+## TTS portfolio breadth
+
+Same authorship split as the ASR table above. I am the integration author and architect, not the author of the underlying TTS models. I did not train MOSS-TTS, the ElevenLabs voices, Qwen3-TTS, or OpenAI TTS. OpenMOSS, ElevenLabs, the Alibaba Qwen team, and OpenAI own those. What I built is the production pipeline on top: the 23-emotion to sampling-params mapping, the continuation chaining that preserves prosodic continuity across speaker turns, the multi-speaker timeline mixer, the HDP profile director, and the episode orchestrator that turns a script into a mixed multi-speaker audio file.
+
+Four TTS projects below:
+
+| Project | Public repo | I wrote (original, by me) | I use (third-party, not by me) |
+|---|---|---|---|
+| **hdp-forge** (flagship) | coming soon | Full production pipeline (~4,100 LOC, 199 tests): `emotion_mapping.py` (23-emotion → TTS sampling params), `rule_based.py` director, `episode.py` orchestrator, `mixer.py` + `timeline.py` for multi-speaker audio composition, `moss/single.py` continuation chaining that preserves prosodic continuity across speaker turns, ElevenLabs integration with emotion-tuned stability/similarity, HDP profile loader | MOSS-TTS 8B (OpenMOSS), ElevenLabs API, transformers, pydub, torchaudio |
+| **text to speech** (podcast production) | local repo | `produce_episode` v1-v8 orchestrator (script → TTS → SFX layering → mixed audio), custom SFX script syntax with nested layering, `emotional_tts.py` parameter tuning, `clone_voice.py` workflow, `comic_generator` pipeline (panel generation from episode transcripts), `batch_convert.py`, HeyGen avatar video wrapper | ElevenLabs API (TTS + voice clone), OpenAI API (TTS + image), HeyGen (avatar video), Imagine.art (comic image gen) |
+| **HDP Sports** | local repo | `hdp_dialogue_generator.py` (multi-speaker ElevenLabs Text-to-Dialogue wrapper), `emotion_enhancer.py` emotion tagging, `humanistic_enhancer.py` dialogue naturalization. A separate variant from hdp-forge that targets the ElevenLabs Text-to-Dialogue API instead of a local MOSS checkpoint | ElevenLabs Text-to-Dialogue API |
+| **MOSS-TTS CLI toolkit** | local repo | Four CLI apps on top of the OpenMOSS checkpoints: `moss_tts_app.py`, `moss_ttsd_app.py`, `moss_voice_generator_app.py`, `moss_sound_effect_app.py`, plus a Gradio real-time demo. These are shell-friendly wrappers; the inference code underneath is upstream | OpenMOSS MOSS-TTS 8B and sound-effect models |
+
+The novel TTS engineering lives inside hdp-forge: the 23-emotion to sampling-params mapping that steers reference-tier selection and decoder temperature per line, the continuation chaining that preserves prosodic continuity across multi-speaker turns by passing prior audio as a prefix for the next synthesis step, the HDP profile system that drives per-speaker direction, and the timeline mixer that composes multi-speaker episodes. MOSS-TTS 8B (OpenMOSS), ElevenLabs, OpenAI TTS, and HeyGen are third-party components I integrate. The pipeline, director, mixer, multi-speaker timeline composition, and SFX layering syntax are my work.
 
 ---
 
