@@ -82,6 +82,23 @@ The narrative arc: start with a hosted API (Grok), iterate on the serving archit
 
 ---
 
+## STT portfolio breadth
+
+Six speech-to-text projects covering different architectural patterns. Each is an original integration built on publicly available model and library components. The three flagship sections above describe the work in narrative form; this table is the quick reference showing what was built versus what was reused.
+
+| Project | Public repo | Built (original) | Built on (open-source / third-party) |
+|---|---|---|---|
+| **asr-transcript-project** | [repo](https://github.com/NathanMaine/asr-transcript-project) | `transcribe.py` (700 lines), custom CTC frame-level word alignment, 9 pyannote compatibility patches for PyTorch nightly + numpy 2.x + PyTorch 2.6+, torchaudio soundfile fallback for aarch64, batch orchestration for a 1,013-file corpus | NVIDIA Parakeet CTC 1.1B, pyannote.audio 3.1.1, torchaudio, ffmpeg |
+| **video analyzer (v3/v4)** | local repo | Provider abstraction layer with runtime Gemini/Ollama/Parakeet switching, two-pass extraction-then-analysis architecture, segment-based video extraction with 30-second overlap, 4-strategy JSON parse with truncation retry, real-time SSE progress streaming | Gemini API, Ollama (Qwen2.5-VL, LLaVA), NVIDIA Parakeet, Docling |
+| **google voice** | local repo | Chrome extension with two-channel capture (tab audio + mic), FastAPI backend with WebSocket PCM streaming, three-WAV-per-call save architecture (remote, local, mixed), React dashboard with search and playback | Chrome extension APIs, faster-whisper (DGX GPU), Ollama (Llama 3.1), SQLite |
+| **Project-Aurora-Echo (PoC)** | [repo](https://github.com/NathanMaine/Project-Aurora-Echo) | Real-time orchestration layer, multi-provider LLM routing with failover | faster-whisper, pyannote.audio, multi-provider LLM APIs |
+| **Project-Aurora-Echo-v2.0** | [repo](https://github.com/NathanMaine/Project-Aurora-Echo-v2.0) | NVIDIA-accelerated production refinement, structured meeting summaries | NVIDIA NIM, TensorRT-LLM |
+| **realtime-ai-assistant (v1-v4)** | [v1](https://github.com/NathanMaine/realtime-ai-assistant) / [v2](https://github.com/NathanMaine/realtime-ai-assistant002) / [v3-fastapi](https://github.com/NathanMaine/realtime-ai-assistant003-fast-api) / [v4-streamlit](https://github.com/NathanMaine/realtime-ai-assistant004-stream-lit) | Four progressive architectural iterations: xAI Grok integration, FastAPI + WebSocket rewrite, Streamlit UI variant, DGX-hosted production | xAI Grok API, FastAPI, Streamlit |
+
+The novel engineering sits at the integration layer: CTC alignment that skips the forced-aligner step, provider abstraction with runtime switching, two-channel capture that sidesteps the diarization problem, and real-time orchestration with multi-provider failover. The underlying models (Parakeet, faster-whisper, pyannote) are industry-standard components; the architecture around them is original.
+
+---
+
 ## Hardware this runs on
 
 All three projects run on **NVIDIA DGX Spark GB10** (128GB unified memory) with an RTX 4090 available for burst work. Local-first, air-gappable, zero cloud dependency for the inference path.
