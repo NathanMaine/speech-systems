@@ -20,7 +20,7 @@ The three projects below cover one discipline each, in depth.
 
 ## 1. ASR Transcript Project — ASR depth
 
-**Repo:** coming soon
+**Repo:** [NathanMaine/asr-transcript-project](https://github.com/NathanMaine/asr-transcript-project)
 
 Batch transcription of a 1,013-episode YouTube corpus using NVIDIA Parakeet CTC 1.1B on a DGX Spark, with speaker diarization via pyannote.audio. The interesting engineering is a custom CTC frame-level word alignment: word-level timestamps extracted directly from CTC outputs without a separate alignment model.
 
