@@ -36,16 +36,18 @@ Batch transcription of a 1,013-episode YouTube corpus using NVIDIA Parakeet CTC 
 
 ## 2. HDP Forge — TTS depth
 
-**Repo:** private, pending IP review
+**Repo:** coming soon
+**Website:** [memoriant.ai](https://www.memoriant.ai/memoriant_landing)
 
-Multi-speaker podcast synthesis built on the OpenMOSS MOSS-TTS 8B model family (MOSS-TTS, MOSS-VoiceGenerator, MOSS-SoundEffect). Pipeline-internals work, not API orchestration.
+Multi-speaker podcast synthesis using OpenMOSS MOSS-TTS 8B. Custom continuation chaining preserves prosodic continuity across speaker turns by passing prior audio as a prefix for the next synthesis step. A 23-emotion-to-sampling-params mapping steers reference-tier selection and decoder temperature per line.
 
-**Stack:** MOSS-TTS 8B family, PyTorch + transformers (Flash Attention 2 where available), Llama 3.1 70B via vLLM for script enhancement, pydub for timeline mixing, DGX Spark GB10 for inference.
+**Stack:** MOSS-TTS 8B, MOSS-VoiceGenerator, MOSS-SoundEffect, PyTorch + transformers (Flash Attention 2 where available), Llama 3.1 70B via vLLM for script enhancement, pydub for timeline mixing.
 
 **What it demonstrates:**
 - Pipeline-internals TTS work, not API orchestration
-- Multi-speaker timeline control on owned hardware
-- GPU phase management across LLM and TTS stages
+- Custom prosodic continuity across multi-speaker timelines
+- Emotion control that targets a real parameter surface, not tags on a third-party API
+- GPU phase management across LLM → TTS → mixer lifecycle
 
 ---
 
